@@ -1,10 +1,665 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Website</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOLDEN DEFENDER - Arcade Cabinet Restoration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --dark-gold: #B8860B;
+            --deep-purple: #1a0033;
+            --electric-blue: #00ffff;
+            --neon-pink: #ff00ff;
+            --arcade-black: #0a0015;
+            --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--arcade-black);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.02) 50%, transparent 100%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 215, 0, 0.03) 2px, rgba(255, 215, 0, 0.03) 4px);
+            background-size: 100% 100%, 50px 50px;
+            animation: gridScroll 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridScroll {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 0 100px, 0 50px; }
+        }
+
+        /* Scanlines effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanlineMove 8s linear infinite;
+        }
+
+        @keyframes scanlineMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header/Hero */
+        header {
+            position: relative;
+            padding: 100px 0 80px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); }
+            to { filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.9)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--electric-blue);
+            letter-spacing: 0.3em;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 0, 51, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--gold);
+            z-index: 100;
+            padding: 15px 0;
+            box-shadow: 0 5px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-gold);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-item:hover {
+            color: var(--arcade-black);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .nav-item:hover::before {
+            left: 0;
+        }
+
+        /* Gallery Grid */
+        .gallery-section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: var(--gradient-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .gallery-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(26, 0, 51, 0.8), rgba(10, 0, 21, 0.9));
+            border: 2px solid var(--dark-gold);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .gallery-card:nth-child(even) {
+            animation-delay: -3s;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .gallery-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-gold);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .gallery-card:hover {
+            transform: scale(1.05) translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.4);
+        }
+
+        .gallery-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 1;
+            filter: brightness(0.9);
+            transition: filter 0.4s ease;
+        }
+
+        .gallery-card:hover .card-image {
+            filter: brightness(1.1) saturate(1.2);
+        }
+
+        .card-content {
+            padding: 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .card-arrow {
+            display: inline-block;
+            color: var(--electric-blue);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-card:hover .card-arrow {
+            transform: translateX(10px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--deep-purple);
+            border-top: 3px solid var(--gold);
+            padding: 60px 0 30px;
+            margin-top: 100px;
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copyright {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-grid {
+                gap: 10px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            header {
+                padding: 60px 0 40px;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gallery-card {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .gallery-card:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-card:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-card:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-card:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-card:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-card:nth-child(6) { animation-delay: 0.6s; }
+        .gallery-card:nth-child(7) { animation-delay: 0.7s; }
+        .gallery-card:nth-child(8) { animation-delay: 0.8s; }
+        .gallery-card:nth-child(9) { animation-delay: 0.9s; }
+    </style>
 </head>
 <body>
-  <h1>Hello!</h1>
-  <p>This is my first Netlify page.</p>
+    <div class="background-grid"></div>
+    <div class="scanlines"></div>
+
+    <header>
+        <div class="container">
+            <h1 class="hero-title">GOLDEN DEFENDER</h1>
+            <p class="hero-subtitle">Arcade Cabinet Restoration</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-grid">
+            <a href="#home" class="nav-item">Home</a>
+            <a href="#gallery" class="nav-item">Gallery</a>
+            <a href="#songs" class="nav-item">Songs</a>
+            <a href="#sounds" class="nav-item">Sounds</a>
+            <a href="#enemies" class="nav-item">Enemies</a>
+            <a href="#video" class="nav-item">Video</a>
+            <a href="#story" class="nav-item">Story</a>
+            <a href="#schematics" class="nav-item">Schematics</a>
+            <a href="#contact" class="nav-item">Contact</a>
+            <a href="#faq" class="nav-item">FAQ</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="gallery-section">
+            <div class="container">
+                <h2 class="section-title">Cabinet Components</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SSKuNyz9AFjC2GN2U475Gf9RumcR81AsZEMCgFPeSK__D1qgFfkBzUpeCRxPaIa66naPp0rnq1GDt6Crhf8EnN6mqtDY65y6lPrzyvmC-nnFza_aIif6HD5r8A9O4qEEJUjvVsxDd1mcN0G8yFDRmcpKxLM4j41bSAwbuy-GQAmKhB3WmyKjUharMxwsd0HFhJYWv1G2qPifv3PUoBCMvFylpy2CAIEQR_cdbE=w1280" alt="Golden Bezel" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Bezel</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STPq4OxnCWrmxvm_nX_GiYzGxd77ZXEAWvhuC-a342qiuAjw9xxwXkGqYg4iqmtpzQdhm3w5v58NxbIePIRwhMpIhxfY-aSPHwprj16deJMF6pML3bsrnRaZRMECXoro3C2H6HASFibvMITSJzKM07gtf9zeio7sjgD-VjnXwcgvPVVI8k7-arIjT9WBjB9vKncx-hrNH56Uqys-INUV6b3UQ54fdvqVX6idr8=w1280" alt="Golden Controls" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Controls</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SS6jIe32j21lg21iJ3HkHTgH_9HgVYrHB6xiyjGtUKfvwNWxZ27TGPEeEtllPhW6rzTqNivTx8Y2DuUpzHtXhMBnbmoVHFOTRkW1AyJlgz2JBJ3sP7OKD5GhjHIwNzBW_dzQmmTIVb992DnGi4_ttR-cFO0vL0kYTYELBjDKpcZwCUU8OntumlSP0hf_esXdoYJ4iB7t-UoHG4MlZL0p0gZMZuZd-6_hWWkYPo=w1280" alt="Golden Marquee" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Marquee</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STPkQJLbvnRtsVmjbBDXM3MUEfVhdgmClJzCXIGXHP48_Bwoc4agXB5qFMGI2h9iv9_TQ2b3T5I3RYbrHn08D-j_Ef0lt_VK8FwB5hqlKmE4rPeBFFIeNHZgWucDrYF7sCKsLUUu0NEMJ12Z-t96Jb68ngNPbk7xZ2rlW1qPNfl990yiS_HwLUavVtyqdr-AyIcOht8bsvwIHRMbhqAoZbkUVaYGltLY0TEzlc=w1280" alt="Golden Boards" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Boards</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STaAMgSleFrQB6BX1QR8RGpvqKu22cedf7fD2lSKP-Z3V3vFKVladYpaTjqPRJFYTwheLaZxqQ1RcJFcvYBKyjmHgYsdB2GnfVqwma3HtxRsuYybFHvigl2yzm3C28ADm0PXP3Bc6YFEBuunjwndXafNHrzYohqDU2YhMg8r_V0Xz8EKsUCS06lICpY3-R9pkVtRNHd0twAZP0o9S8rSwVAMKxgCO0sVPxE7vg=w1280" alt="Golden Monitor" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Monitor</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SSp3QNFVMhHU3ZfnW1cj86lFk8_mP_upBBGObeTiZeEVUwfj1kH_ksdZfI7-epaif0oNdmvNbqTHbKn_OCbgaOhlBddMfJXdCnpu8ubAZe9N7YXxT7OYhsjMlslDmTX0wuvJZt7tudoN1yHeplDD3Bo5ivp42kgpZglFHjZ8vZ5Kh1xYxOObpP9kIlWy2ZvHVCEhZhURk1sDbjx0CgwVUBH5P7NvB4bkpss=w1280" alt="Golden Coin Door" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Coin Door</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">The Journey</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STnVZ2D4TFgcL7rjWQuuFchrwrUnWbQm3fPb_Bblnd49-k3Gt1MR52IRN8StijOFl3BySvKZX03orV_piXw_xEqWEpFU37HbFsid3HpI9himw9qytPpivgSlP1I34DXKghGxCgbo5ka6vqB-b5JC2gETKeUgpPUu9zPNoHoLrwQ9S8Tgfv5Ah6BAkdKJHlKK9U-zeWv1DhD9ARoDn20ps7xwFRVM5hJ4VMDsoo=w1280" alt="Full Photos" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Full Photos</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SRHPKIf8UzZat5VJVDE-tc2e3iz7-Hae-y4ZjIZEnm9_P8gRnM2zPpmhu3fPcfPwUv7nf9HRAvxcMDKNPCkxy_YsuLcofqoXzrgpAdQ8o0-PVXqhb6SqcPmrpxRJ2syXmdnQEl9F_luq44RvXLbfbsQcCmoPIF2pf4W4swiBHmY9BKYMvjYt2RQKGiHhPxhhoecVu2nWQi89WYG-qKuMzoJq4z8M8vk9SDV=w1280" alt="Golden Beginnings" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Beginnings</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0ST6Wa_cytGAuPppR9tcVR9hWWZHqo2iyNS4hBepZv8124rwNw0-fqXwzT1YPa4cyRC9Srx-sNPhbYI8Ij0QpWMNr-eBoJYEicYB-FcipC_fxTDNQo01sEdZYNeZHhmQVUl-bEvTywmQB1CKnY1PFYqv1LDUeYBBUvM1_8_tiO7uO7d9F2gv4_0rVKhVlbVOHvXXCwNilPKTRUKzOF2iePPGQ6JOjRc7AwBQLCk=w1280" alt="Golden Tribute" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Tribute</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0ST6i8-zmBfv_xGNpbW-dLA_o2YttW62VVG4dRN7DuqhrcjCbFiYUUcTSXhGnZ7J-QV_jQEOX2fAXFgrBLFvE1zAwqvH-3c_u9wSR3f5uME109xMOoV-hUofDjzyTA0ph_LPsmuop3sYWbk_SbI8udB6xzTUP4V8HY30qOFPluzNuj0Oo5z6p-56lnWWZW5uAv-jDFtL2djsM-gXx73xXSMJtuC71DtNXjuu=w1280" alt="Golden Story" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">A Golden Story</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SRtBpLJ0t8TsD9oQov4_rzemmT2K3GMxA5ALFoL2jkGQvkaHc2MYJkTGUrWUQdSarq9SIxXbu1oZggWLAUWI8ZMb6-kUpMq9GeENIU9vHWp7tDB1UQI75qa6O2Fv5Zv5qIrX40Pbx9DkZaZ8bDOXsCD_L9AG4NfsjKP_SSTHr6u4nFZqdCsXFdkOq6LMQm-fKR4DQXAuZm9ct9n7n-zkS72HaerBslyGX6s=w1280" alt="Golden Videos" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Videos</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SQ8XOPNpl71mv9O8A3M9sdVA5nrd0G96OJOtA4Mmp45SHu0MjLcGER_4OXZEilocljqThcYwjwk0Oh6dRyCiNpFhoBR7I0IhpTYp7-EWELgR3OO6NdpP7H3syPLNFb4zuxFuQM-fDiSGivgksBpoL9ZiVrFZInYcS7BwRZ_Wr1-JuFEY6RyqF9Cxrcc0rYJ9qt5KfSTauVO0P9LnqLK6s2_jKGSbBHN8L3NqHk=w1280" alt="Golden Songs" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Songs</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Technical Details</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SSuTmswdAU3JW6VwsIIxhR078uJpNmdeygAPvk45Dzh16B36pHUmTI4FMGA2QG3qEFP221mcpro8CaPeXPuZETA9WV-qBWVp2kdk1P8cDrEagvEnCoKtsdtkjwjGEmKG7V_xEme5FOjRtVWkuDX5TuihZ3GOLT_sjZOHGsc3bdqqn3b-Ph5Iiq3c_QFZzBrpZ1WS7P1hcMXMYYoywPpuIpRBMJL4hN-Cx1Fyso=w1280" alt="Schematics" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Schematics</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0SQmUW5sTnXN0lfbqh4yahkMhMPf-qYxb6csQYeWomxIju9emPJUmWc1eRvsvr3lhB5XaJcaFBf6tFMcWYgNAMHZ0y4KMVBC-8u1GxR2-u0AK36eK6WniRoXN-5C_ZI44pOQjw6XbDE6CBs4XBwpMtHAuwhvndjjPZr5jLcZ6YxH-PVU-Z3efVNKE0V6gSsP4KqZGdZLBfWcv5cy5VpXn4lwVh4GMYDXwW5Xwdc=w1280" alt="Golden Enemies" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden Enemies</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-card">
+                        <img src="https://lh3.googleusercontent.com/sitesv/APaQ0STt4tBR24Pp2teoNUuHAbuSJzq1VH-9vvLWHFaBmstzWFxRL3tCVLixKIYLqKufdDuDxj2fxkYRRK89ZovvOCKOOxw2_dZkBI1eZGtKLXWsZDmLwIHJYcTzeE0_1f3JwEiOE5LO_uPJoOvx3Swvay6_MyWiq6EtET2KQ0FH25IDV-7OCI1jhtgfitIQUxk0Bj2PkaW1WFbQaD5q0zSkIrReKV6omBYebPGK0Ik=w1280" alt="Golden History" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">Golden History</h3>
+                            <span class="card-arrow">⮞</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="#bezel">Golden Bezel</a></li>
+                        <li><a href="#controls">Golden Controls</a></li>
+                        <li><a href="#marquee">Golden Marquee</a></li>
+                        <li><a href="#boards">Golden Boards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Build Process</h3>
+                    <ul class="footer-links">
+                        <li><a href="#history">Golden History</a></li>
+                        <li><a href="#parts">Golden Parts</a></li>
+                        <li><a href="#paint">Golden Paint</a></li>
+                        <li><a href="#inspection">Golden Inspection</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Media</h3>
+                    <ul class="footer-links">
+                        <li><a href="#songs">Golden Songs</a></li>
+                        <li><a href="#sounds">Classic Sounds</a></li>
+                        <li><a href="#video">Golden Video</a></li>
+                        <li><a href="#poem">A Golden Poem</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul class="footer-links">
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#creator">Golden Creator</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p><span class="copyright">Copyright 2024 Golden Defender</span> | A Retro Arcade Restoration Project</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect to hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('header');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                hero.style.opacity = 1 - (scrolled * 0.002);
+            }
+        });
+
+        // Card reveal on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.gallery-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
 </body>
 </html>
